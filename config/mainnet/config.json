@@ -1,0 +1,81 @@
+{
+	"networkVersion": "2.0",
+	"label": "mainnet",
+	"genesisConfig": {
+		"blockTime": 10,
+		"communityIdentifier": "Valois",
+		"maxPayloadLength": 15360,
+		"bftThreshold": 68,
+		"minFeePerByte": 1000,
+		"baseFees": [
+			{
+				"moduleID": 5,
+				"assetID": 0,
+				"baseFee": "1000000000"
+			}
+		],
+		"rewards": {
+			"milestones": ["500000000", "400000000", "300000000", "200000000", "100000000"],
+			"offset": 1451520,
+			"distance": 3000000
+		},
+		"minRemainingBalance": "5000000",
+		"activeDelegates": 101,
+		"standbyDelegates": 2,
+		"delegateListRoundOffset": 2
+	},
+	"logger": {
+		"fileLogLevel": "error",
+		"consoleLogLevel": "none"
+	},
+	"network": {
+		"seedPeers": [
+			{
+				"ip": "mainnet-seed-01.valois.io",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-02.valois-nodes.net",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-03.valois.io",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-04.valois-nodes.net",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-05.valois.io",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-06.valois-nodes.net",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-07.valois.io",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-08.valois-nodes.net",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-09.valois.io",
+				"port": 8001
+			},
+			{
+				"ip": "mainnet-seed-10.valois-nodes.net",
+				"port": 8001
+			}
+		],
+		"port": 8001
+	},
+	"forging": {
+		"waitThreshold": 2,
+		"delegates": []
+	},
+	"plugins": {}
+}

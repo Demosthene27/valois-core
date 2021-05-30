@@ -1,0 +1,10 @@
+# This file is used by the Makefile.
+# You should never need to modify it.
+version: '3'
+services:
+  valois-task:
+    image: valois/core:${ENV_VALOIS_VERSION}
+    volumes:
+      - valois-data:/home/valois/.valois
+    entrypoint: /home/valois/node_modules/.bin/valois-core
+    command: /bin/true

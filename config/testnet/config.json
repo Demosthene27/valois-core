@@ -1,0 +1,61 @@
+{
+	"networkVersion": "2.0",
+	"label": "testnet",
+	"genesisConfig": {
+		"blockTime": 10,
+		"communityIdentifier": "Valois",
+		"maxPayloadLength": 15360,
+		"bftThreshold": 68,
+		"minFeePerByte": 1000,
+		"baseFees": [
+			{
+				"moduleID": 5,
+				"assetID": 0,
+				"baseFee": "1000000000"
+			}
+		],
+		"rewards": {
+			"milestones": ["500000000", "400000000", "300000000", "200000000", "100000000"],
+			"offset": 2160,
+			"distance": 3000000
+		},
+		"minRemainingBalance": "5000000",
+		"activeDelegates": 101,
+		"standbyDelegates": 2,
+		"delegateListRoundOffset": 2
+	},
+	"logger": {
+		"fileLogLevel": "error",
+		"consoleLogLevel": "info"
+	},
+	"network": {
+		"port": 7001,
+		"seedPeers": [
+			{
+				"ip": "testnet-seed-01.valois.io",
+				"port": 7001
+			},
+			{
+				"ip": "testnet-seed-02.valois-nodes.net",
+				"port": 7001
+			},
+			{
+				"ip": "testnet-seed-03.valois.io",
+				"port": 7001
+			},
+			{
+				"ip": "testnet-seed-04.valois-nodes.net",
+				"port": 7001
+			},
+			{
+				"ip": "testnet-seed-05.valois.io",
+				"port": 7001
+			}
+		]
+	},
+	"forging": {
+		"waitThreshold": 2,
+		"delegates": []
+	},
+	"plugins": {}
+}

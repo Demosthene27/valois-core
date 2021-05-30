@@ -1,0 +1,26 @@
+# Base file, do not modifiy.
+# Make changes in docker-compose.override.yml instead.
+# See https://docs.docker.com/compose/extends/#example-use-case
+version: '3'
+services:
+  valois:
+    image: valois/core:${ENV_VALOIS_VERSION}
+    volumes:
+      - valois-data:/home/valois/.valois
+    ports:
+      - ${ENV_VALOIS_HTTP_API_PLUGIN_PORT}:${ENV_VALOIS_HTTP_API_PLUGIN_PORT}
+      - ${ENV_VALOIS_API_WS_PORT}:${ENV_VALOIS_API_WS_PORT}
+      - ${ENV_VALOIS_PORT}:${ENV_VALOIS_PORT}
+    networks:
+      - valois
+    restart: unless-stopped
+    command: ['--network', '${ENV_VALOIS_NETWORK}']
+    environment:
+      - VALOIS_FILE_LOG_LEVEL=none
+      - VALOIS_CONSOLE_LOG_LEVEL=info
+
+networks:
+  valois:
+
+volumes:
+  valois-data:
