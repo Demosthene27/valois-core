@@ -1,0 +1,99 @@
+pipeline {
+	agent { node { label 'valois-core' } }
+	options { skipDefaultCheckout() }
+	stages {
+		stage('Checkout SCM') {
+			when { branch 'development' }
+			steps {
+				cleanWs()
+				dir('valois-sdk') {
+					git branch: 'development', url: 'https://github.com/ValoisHQ/valois-sdk'
+				}
+				dir('valois-core') {
+					git branch: 'development', url: 'https://github.com/ValoisHQ/valois-core'
+				}
+			}
+		}
+		stage('Build SDK') {
+			when { branch 'development' }
+			steps {
+				dir('valois-sdk') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --global yarn
+						yarn
+						yarn build
+						'''
+					}
+				}
+			}
+		}
+		stage('Publish SDK') {
+			when { branch 'development' }
+			steps {
+				dir('valois-sdk') {
+					nvm(readFile(".nvmrc").trim()) {
+						withCredentials([string(credentialsId: 'npm_valois_io_registry_password', variable: 'PASS')]) {
+							sh '''#!/bin/bash -e
+							echo //npm.valois.io/:_authToken=$( curl --silent https://npm.valois.io/-/user/org.couchdb.user:jenkins/-rev/undefined -u jenkins:$PASS -X PUT \
+							  -d '{"_id":"org.couchdb.user:jenkins","name":"jenkins","password":"'$PASS'","type":"user","roles":[],"date":"2020-07-23T06:13:20.194Z","ok":"you are authenticated as 'undefined'"}' \
+							  -H content-type:application/json |jq --raw-output .token ) >~/.npmrc
+							'''
+						}
+						sh 'npx lerna publish --canary --preid nightly$BUILD_NUMBER --registry https://npm.valois.io --ignore-scripts --yes |tee lerna_publish.log'
+					}
+				}
+			}
+			post {
+				always {
+				sh 'rm -f ~/.npmrc'
+				}
+			}
+		}
+		stage('Build Core') {
+			when { branch 'development' }
+			steps {
+				dir('valois-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						package_version=$( jq --raw-output .version package.json )
+						jq '.version="'${package_version%%-*}-nightly$BUILD_NUMBER'"' package.json >package.json_; mv -f package.json_ package.json
+						# temporary workaround
+						jq '.private=false' package.json >package.json_; mv -f package.json_ package.json
+						# TODO: set SDK version
+						published_sdk_version=$( grep --after-context=100 '^Successfully published:' ../valois-sdk/lerna_publish.log |grep '^ - valois-sdk@' | cut -d @ -f 2 )
+						jq '.dependencies["valois-sdk"]="'$published_sdk_version'"' package.json >package.json_; mv -f package.json_ package.json
+						npm install --registry https://npm.valois.io/
+						npm install --global yarn
+						npm run build
+						npm test
+						'''
+					}
+				}
+			}
+		}
+		stage('Publish Core') {
+			when { branch 'development' }
+			steps {
+				dir('valois-core') {
+					nvm(readFile(".nvmrc").trim()) {
+						withCredentials([string(credentialsId: 'npm_valois_io_registry_password', variable: 'PASS')]) {
+							sh '''#!/bin/bash -e
+							echo //npm.valois.io/:_authToken=$( curl --silent https://npm.valois.io/-/user/org.couchdb.user:jenkins/-rev/undefined -u jenkins:$PASS -X PUT \
+							  -d '{"_id":"org.couchdb.user:jenkins","name":"jenkins","password":"'$PASS'","type":"user","roles":[],"date":"2020-07-23T06:13:20.194Z","ok":"you are authenticated as 'undefined'"}' \
+							  -H content-type:application/json |jq --raw-output .token ) >~/.npmrc
+							'''
+						}
+						sh 'npm publish --registry https://npm.valois.io'
+					}
+				}
+			}
+			post {
+				always {
+				sh 'rm -f ~/.npmrc'
+				}
+			}
+		}
+	}
+}
+// vim: filetype=groovy

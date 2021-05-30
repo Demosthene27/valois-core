@@ -1,0 +1,13 @@
+pipeline {
+	agent { node { label 'valois-core' } }
+	stages {
+		stage('npm audit') {
+			steps {
+				nvm(readFile(".nvmrc").trim()) {
+					sh 'npm audit'
+				}
+			}
+		}
+	}
+}
+// vim: filetype=groovy
