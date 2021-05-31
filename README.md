@@ -40,7 +40,7 @@ Clone the Valois Core repository using Git and initialize the modules.
 ## From Source
 
 ```bash
-git clone https://github.com/ValoisHQ/valois-core.git
+git clone https://github.com/Demosthene27/valois-core.git
 cd valois-core
 git checkout master
 npm ci
